@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mvc_app/constants/route_names.dart';
+import 'package:mvc_app/controller/login_controller.dart';
 import 'package:mvc_app/utils/custom_text_button.dart';
 import 'package:mvc_app/utils/custom_text_form_field.dart';
 import 'package:mvc_app/utils/label_text.dart';
@@ -12,8 +14,12 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final LoginController _loginController = LoginController();
+  @override
+  void dispose() {
+    _loginController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,78 +49,129 @@ class _LoginViewState extends State<LoginView> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 24.h,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: LabelText(
-                          data: "Welcome Back",
-                          fontSize: 28.h,
-                          fontWeight: FontWeight.bold,
+                  child: Form(
+                    key: _loginController.globalKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 24.h,
                         ),
-                      ),
-                      SizedBox(
-                        height: 40.h,
-                      ),
-                      CustomTextFormField(
-                        labelText: "Enter email",
-                        isObsecure: false,
-                        iconData: Icons.email,
-                        textEditingController: _emailController,
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      CustomTextFormField(
-                        labelText: "Enter Password",
-                        isObsecure: true,
-                        iconData: Icons.lock,
-                        textEditingController: _passwordController,
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: CustomTextButton(
-                          name: "Forgot password?",
-                          onPressed: () {},
-                          fontSize: 14.h,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      OutlinedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(
-                            color: Colors.white,
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: LabelText(
+                            data: "Welcome Back",
+                            fontSize: 28.h,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20.h,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          LabelText(
-                            data: "Don't have an account?",
-                            fontSize: 14.h,
-                            fontWeight: FontWeight.w500,
+                        SizedBox(
+                          height: 40.h,
+                        ),
+                        CustomTextFormField(
+                          currentNode: _loginController.emailFocusNode,
+                          nextNode: _loginController.passwordFocusNode,
+                          textInputType: TextInputType.emailAddress,
+                          validator: (value) => _loginController.validateEmail(
+                            _loginController.emailController.text,
                           ),
-                          CustomTextButton(
-                            name: "Create account",
+                          labelText: "Enter email",
+                          isObsecure: false,
+                          prefixIconData: Icons.email,
+                          textEditingController:
+                              _loginController.emailController,
+                        ),
+                        SizedBox(
+                          height: 30.h,
+                        ),
+                        ValueListenableBuilder(
+                          valueListenable: _loginController.isPasswordVissible,
+                          builder: (context, value, child) {
+                            return CustomTextFormField(
+                              currentNode: _loginController.passwordFocusNode,
+                              textInputType: TextInputType.visiblePassword,
+                              validator: (value) =>
+                                  _loginController.validatePassword(
+                                _loginController.passwordController.text,
+                              ),
+                              labelText: "Enter Password",
+                              isObsecure: value,
+                              prefixIconData: Icons.lock,
+                              textEditingController:
+                                  _loginController.passwordController,
+                              suffixIconButton: value
+                                  ? IconButton(
+                                      onPressed: () {
+                                        _loginController
+                                                .isPasswordVissible.value =
+                                            !_loginController
+                                                .isPasswordVissible.value;
+                                      },
+                                      icon: const Icon(
+                                        Icons.visibility,
+                                      ))
+                                  : IconButton(
+                                      onPressed: () {
+                                        _loginController
+                                                .isPasswordVissible.value =
+                                            !_loginController
+                                                .isPasswordVissible.value;
+                                      },
+                                      icon: const Icon(
+                                        Icons.visibility_off,
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: CustomTextButton(
+                            name: "Forgot password?",
                             onPressed: () {},
                             fontSize: 14.h,
                             fontWeight: FontWeight.w500,
-                          )
-                        ],
-                      )
-                    ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        OutlinedButton(
+                          onPressed: () {
+                            _loginController.login();
+                          },
+                          child: const Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            LabelText(
+                              data: "Don't have an account?",
+                              fontSize: 14.h,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            CustomTextButton(
+                              name: "Create account",
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  RouteName.signupPage,
+                                );
+                              },
+                              fontSize: 14.h,
+                              fontWeight: FontWeight.w500,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:mvc_app/constants/constants.dart';
+import 'package:mvc_app/constants/validation_mixin.dart';
 
-class LoginController {
+class LoginController with FormValidation {
   final FirebaseConstants _firebaseConstants = FirebaseConstants();
-
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
-  final GlobalKey<FormState> globalKey;
-
-  LoginController({
-    required this.emailController,
-    required this.passwordController,
-    required this.globalKey,
-  });
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> globalKey = GlobalKey();
+  final FocusNode emailFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+  final ValueNotifier<bool> isPasswordVissible = ValueNotifier(true);
 
   // method to check wheather email is valid or not
   String? validateEmail(String email) {
-    if (isValidEmail(email)) {
+    if (email.isEmpty) {
+      return "This field is required";
+    } else if (isValidEmail(email)) {
       return null;
     }
     return "Enter a valid email";
@@ -24,23 +23,12 @@ class LoginController {
 
   // method to check wheather password is strong or not
   String? validatePassword(String password) {
-    if (isStrongPassword(password)) {
+    if (password.isEmpty) {
+      return "This field is required";
+    } else if (isStrongPassword(password)) {
       return null;
     }
-    return "Enter a password atleast with 6 characters";
-  }
-
-  bool isValidEmail(String email) {
-    final RegExp emailRegex =
-        RegExp(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
-    return emailRegex.hasMatch(email);
-  }
-
-  bool isStrongPassword(String password) {
-    if (password.length >= 6) {
-      return true;
-    }
-    return false;
+    return "Enter a password with atleast 5 character";
   }
 
   dispose() {

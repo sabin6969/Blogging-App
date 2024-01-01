@@ -1,30 +1,46 @@
 import 'package:flutter/material.dart';
 
-class CustomTextFormField extends StatefulWidget {
+class CustomTextFormField extends StatelessWidget {
   final String labelText;
   final bool isObsecure;
-  final IconData iconData;
+  final IconData prefixIconData;
+  final String? Function(String?) validator;
   final TextEditingController textEditingController;
-  const CustomTextFormField(
-      {super.key,
-      required this.labelText,
-      required this.isObsecure,
-      required this.iconData,
-      required this.textEditingController});
+  final TextInputType textInputType;
+  final IconButton? suffixIconButton;
+  final FocusNode currentNode;
+  final FocusNode? nextNode;
 
-  @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
-}
+  const CustomTextFormField({
+    Key? key,
+    required this.labelText,
+    required this.isObsecure,
+    required this.prefixIconData,
+    required this.textEditingController,
+    required this.validator,
+    required this.textInputType,
+    required this.currentNode,
+    this.suffixIconButton,
+    this.nextNode,
+  }) : super(key: key);
 
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      obscureText: widget.isObsecure,
-      controller: widget.textEditingController,
+      focusNode: currentNode,
+      keyboardType: textInputType,
+      validator: validator,
+      obscureText: isObsecure,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(
+          nextNode,
+        );
+      },
+      controller: textEditingController,
       decoration: InputDecoration(
-        labelText: widget.labelText,
-        prefixIcon: Icon(widget.iconData),
+        labelText: labelText,
+        prefixIcon: Icon(prefixIconData),
+        suffixIcon: suffixIconButton,
       ),
     );
   }
