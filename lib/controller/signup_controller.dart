@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_app/constants/validation_mixin.dart';
 import 'package:mvc_app/constants/constants.dart';
+import 'package:mvc_app/utils/toast_message.dart';
 
 class SignupController with FormValidation, ChangeNotifier {
   bool _isLoading = false;
@@ -36,7 +38,10 @@ class SignupController with FormValidation, ChangeNotifier {
     if (globalKey.currentState!.validate()) {
       if (signupDetails["password"]!
               .compareTo(signupDetails["confirmPassword"]!) !=
-          0) return;
+          0) {
+        showToastMessage("Both password must match");
+        return;
+      }
 
       _changeStatus(true);
       FirebaseConstants.firebaseAuth
@@ -46,13 +51,17 @@ class SignupController with FormValidation, ChangeNotifier {
       )
           .then(
         (value) {
-          debugPrint("account created");
           _changeStatus(false);
+          showToastMessage("Account created!. You can now login");
         },
       ).onError(
         (error, stackTrace) {
-          debugPrint("account created");
           _changeStatus(false);
+          if (error is FirebaseException) {
+            showToastMessage(error.message.toString());
+            return;
+          }
+          showToastMessage(error.toString());
         },
       );
     }
