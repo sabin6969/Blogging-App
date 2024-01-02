@@ -11,6 +11,8 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const LoginView());
       case RouteName.signupPage:
         return MaterialPageRoute(builder: (context) => const SignupPage());
+      case RouteName.defaultPage:
+        return MaterialPageRoute(builder: (context) => const DefaultPage());
       default:
         return MaterialPageRoute(builder: (context) => const DefaultPage());
     }

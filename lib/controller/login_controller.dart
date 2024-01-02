@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:mvc_app/constants/constants.dart';
 import 'package:mvc_app/constants/validation_mixin.dart';
 
-class LoginController with FormValidation {
-  final FirebaseConstants _firebaseConstants = FirebaseConstants();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final GlobalKey<FormState> globalKey = GlobalKey();
-  final FocusNode emailFocusNode = FocusNode();
-  final FocusNode passwordFocusNode = FocusNode();
-  final ValueNotifier<bool> isPasswordVissible = ValueNotifier(true);
+class LoginController with FormValidation, ChangeNotifier {
+  bool _isLoading = false;
+
+  bool get getisLoading => _isLoading;
+
+  void _changeStatus(bool newStatus) {
+    _isLoading = newStatus;
+    notifyListeners();
+  }
 
   // method to check wheather email is valid or not
   String? validateEmail(String email) {
@@ -31,23 +32,26 @@ class LoginController with FormValidation {
     return "Enter a password with atleast 5 character";
   }
 
-  dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-  }
-
-  Future<void> login() async {
+  Future<void> login({
+    required Map<String, String> loginDetails,
+    required GlobalKey<FormState> globalKey,
+  }) async {
     if (globalKey.currentState!.validate()) {
-      _firebaseConstants.firebaseAuth
+      _changeStatus(true);
+
+      FirebaseConstants.firebaseAuth
           .signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: loginDetails["email"]!,
+        password: loginDetails["password"]!,
       )
           .then((value) {
+        _changeStatus(false);
+
         debugPrint("Login Sucess");
       }).onError((error, stackTrace) {
-        debugPrint("an error occured");
-        debugPrint(error.toString());
+        _changeStatus(false);
+
+        debugPrint("Error occured");
       });
     }
   }

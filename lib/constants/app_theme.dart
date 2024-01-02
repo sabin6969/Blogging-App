@@ -46,6 +46,9 @@ class AppTheme {
           ),
         ),
       ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Colors.white,
+      ),
     );
   }
 }

@@ -4,8 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:mvc_app/constants/app_theme.dart';
 import 'package:mvc_app/constants/routes.dart';
+import 'package:mvc_app/controller/login_controller.dart';
+import 'package:mvc_app/controller/signup_controller.dart';
 import 'package:mvc_app/view/fluid_screen_one.dart';
 import 'package:mvc_app/view/fluid_screen_two.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,22 +26,34 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.appThemeData(context),
-          onGenerateRoute: Routes.generateRoute,
-          home: LiquidSwipe(
-            enableLoop: false,
-            positionSlideIcon: 0.5,
-            slideIconWidget: Icon(
-              Icons.arrow_back_ios,
-              size: 28.sp,
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (context) => LoginController(),
             ),
-            pages: const [
-              FluidScreenOne(),
-              FluidScreenTwo(),
-            ],
-          ),
+            ChangeNotifierProvider(
+              create: (context) => SignupController(),
+            )
+          ],
+          builder: (context, child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.appThemeData(context),
+              onGenerateRoute: Routes.generateRoute,
+              home: LiquidSwipe(
+                enableLoop: false,
+                positionSlideIcon: 0.5,
+                slideIconWidget: Icon(
+                  Icons.arrow_back_ios,
+                  size: 28.sp,
+                ),
+                pages: const [
+                  FluidScreenOne(),
+                  FluidScreenTwo(),
+                ],
+              ),
+            );
+          },
         );
       },
     );

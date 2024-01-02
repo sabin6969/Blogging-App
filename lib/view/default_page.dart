@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class DefaultPage extends StatefulWidget {
   const DefaultPage({super.key});
@@ -10,9 +11,9 @@ class DefaultPage extends StatefulWidget {
 class _DefaultPageState extends State<DefaultPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text("Oops Something went wrong"),
+        child: Lottie.asset("assets/animations/not_found_animation.json"),
       ),
     );
   }

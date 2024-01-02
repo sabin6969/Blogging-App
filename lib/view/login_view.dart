@@ -5,6 +5,7 @@ import 'package:mvc_app/controller/login_controller.dart';
 import 'package:mvc_app/utils/custom_text_button.dart';
 import 'package:mvc_app/utils/custom_text_form_field.dart';
 import 'package:mvc_app/utils/label_text.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -15,15 +16,22 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final LoginController _loginController = LoginController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _globalKey = GlobalKey();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+  final ValueNotifier<bool> _isPasswordVissible = ValueNotifier(true);
+
   @override
   void dispose() {
-    _loginController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.sizeOf(context);
+    final loginController = Provider.of<LoginController>(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -50,7 +58,7 @@ class _LoginViewState extends State<LoginView> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Form(
-                    key: _loginController.globalKey,
+                    key: _globalKey,
                     child: Column(
                       children: [
                         SizedBox(
@@ -68,53 +76,47 @@ class _LoginViewState extends State<LoginView> {
                           height: 40.h,
                         ),
                         CustomTextFormField(
-                          currentNode: _loginController.emailFocusNode,
-                          nextNode: _loginController.passwordFocusNode,
+                          currentNode: _emailFocusNode,
+                          nextNode: _passwordFocusNode,
                           textInputType: TextInputType.emailAddress,
                           validator: (value) => _loginController.validateEmail(
-                            _loginController.emailController.text,
+                            _emailController.text,
                           ),
                           labelText: "Enter email",
                           isObsecure: false,
                           prefixIconData: Icons.email,
-                          textEditingController:
-                              _loginController.emailController,
+                          textEditingController: _emailController,
                         ),
                         SizedBox(
                           height: 30.h,
                         ),
                         ValueListenableBuilder(
-                          valueListenable: _loginController.isPasswordVissible,
+                          valueListenable: _isPasswordVissible,
                           builder: (context, value, child) {
                             return CustomTextFormField(
-                              currentNode: _loginController.passwordFocusNode,
+                              currentNode: _passwordFocusNode,
                               textInputType: TextInputType.visiblePassword,
                               validator: (value) =>
                                   _loginController.validatePassword(
-                                _loginController.passwordController.text,
+                                _passwordController.text,
                               ),
                               labelText: "Enter Password",
                               isObsecure: value,
                               prefixIconData: Icons.lock,
-                              textEditingController:
-                                  _loginController.passwordController,
+                              textEditingController: _passwordController,
                               suffixIconButton: value
                                   ? IconButton(
                                       onPressed: () {
-                                        _loginController
-                                                .isPasswordVissible.value =
-                                            !_loginController
-                                                .isPasswordVissible.value;
+                                        _isPasswordVissible.value =
+                                            !_isPasswordVissible.value;
                                       },
                                       icon: const Icon(
                                         Icons.visibility,
                                       ))
                                   : IconButton(
                                       onPressed: () {
-                                        _loginController
-                                                .isPasswordVissible.value =
-                                            !_loginController
-                                                .isPasswordVissible.value;
+                                        _isPasswordVissible.value =
+                                            !_isPasswordVissible.value;
                                       },
                                       icon: const Icon(
                                         Icons.visibility_off,
@@ -135,16 +137,30 @@ class _LoginViewState extends State<LoginView> {
                         SizedBox(
                           height: 20.h,
                         ),
-                        OutlinedButton(
-                          onPressed: () {
-                            _loginController.login();
+                        Consumer<LoginController>(
+                          builder: (context, value, child) {
+                            return OutlinedButton(
+                              onPressed: loginController.getisLoading
+                                  ? null
+                                  : () {
+                                      loginController.login(
+                                        loginDetails: {
+                                          "email": _emailController.text,
+                                          "password": _passwordController.text,
+                                        },
+                                        globalKey: _globalKey,
+                                      );
+                                    },
+                              child: loginController.getisLoading
+                                  ? const CircularProgressIndicator()
+                                  : const Text(
+                                      "Login",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            );
                           },
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
                         ),
                         SizedBox(
                           height: 20.h,
