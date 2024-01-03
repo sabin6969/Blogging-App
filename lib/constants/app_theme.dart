@@ -33,7 +33,7 @@ class AppTheme {
           fixedSize: MaterialStatePropertyAll(
             Size(
               size.width,
-              55.h,
+              40.h,
             ),
           ),
           textStyle: MaterialStatePropertyAll(

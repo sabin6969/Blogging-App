@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:mvc_app/constants/app_theme.dart';
 import 'package:mvc_app/constants/routes.dart';
+import 'package:mvc_app/controller/forgot_password_controller.dart';
 import 'package:mvc_app/controller/login_controller.dart';
 import 'package:mvc_app/controller/signup_controller.dart';
 import 'package:mvc_app/view/fluid_screen_one.dart';
@@ -33,6 +34,9 @@ class MyApp extends StatelessWidget {
             ),
             ChangeNotifierProvider(
               create: (context) => SignupController(),
+            ),
+            ChangeNotifierProvider(
+              create: (context) => ForgotPasswordController(),
             )
           ],
           builder: (context, child) {

@@ -129,7 +129,12 @@ class _LoginViewState extends State<LoginView> {
                           alignment: Alignment.topLeft,
                           child: CustomTextButton(
                             name: "Forgot password?",
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                RouteName.forgotPasswordPage,
+                              );
+                            },
                             fontSize: 14.h,
                             fontWeight: FontWeight.w500,
                           ),
