@@ -3,4 +3,5 @@ class RouteName {
   static const String signupPage = "/signupPage";
   static const String forgotPasswordPage = "/forgotPasswordPage";
   static const String defaultPage = "/default";
+  static const String homePage = "/homePage";
 }

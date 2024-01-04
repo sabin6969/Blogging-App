@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mvc_app/constants/constants.dart';
+import 'package:mvc_app/constants/route_names.dart';
 import 'package:mvc_app/constants/validation_mixin.dart';
 import 'package:mvc_app/utils/toast_message.dart';
 
@@ -37,6 +38,7 @@ class LoginController with FormValidation, ChangeNotifier {
   Future<void> login({
     required Map<String, String> loginDetails,
     required GlobalKey<FormState> globalKey,
+    required BuildContext context,
   }) async {
     if (globalKey.currentState!.validate()) {
       _changeStatus(true);
@@ -49,6 +51,10 @@ class LoginController with FormValidation, ChangeNotifier {
           .then((value) {
         showToastMessage("Login Sucess");
         _changeStatus(false);
+        Navigator.pushReplacementNamed(
+          context,
+          RouteName.homePage,
+        );
 
         debugPrint("Login Sucess");
       }).onError((error, stackTrace) {

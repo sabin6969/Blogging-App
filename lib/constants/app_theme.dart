@@ -18,8 +18,8 @@ class AppTheme {
       textTheme: TextTheme(
         bodyLarge: GoogleFonts.poppins(
           textStyle: TextStyle(
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w600,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -33,7 +33,7 @@ class AppTheme {
           fixedSize: MaterialStatePropertyAll(
             Size(
               size.width,
-              40.h,
+              45.h,
             ),
           ),
           textStyle: MaterialStatePropertyAll(

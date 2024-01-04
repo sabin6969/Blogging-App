@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mvc_app/controller/forgot_password_controller.dart';
-import 'package:mvc_app/utils/custom_text_form_field.dart';
+import 'package:mvc_app/widgets/custom_text_form_field.dart';
 import 'package:mvc_app/utils/label_text.dart';
 import 'package:provider/provider.dart';
 
